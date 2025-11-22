@@ -6,12 +6,31 @@ import menuRoutes from './src/routes/menuRoutes.js';
 import slotRoutes from "./src/routes/slotRoutes.js";
 import orderRoutes from "./src/routes/orderRoutes.js";
 import dashboardRoutes from "./src/routes/dashboardRoutes.js";
+import cron from "node-cron";
 
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Run every minute
+cron.schedule("* * * * *", async () => {
+  try {
+    const [result] = await db.query(
+      `UPDATE orders 
+       SET order_status = 'expired' 
+       WHERE order_status != 'pickedup'
+       AND pickup_time < DATE_SUB(NOW(), INTERVAL 15 MINUTE)`
+    );
+
+    if (result.affectedRows > 0) {
+      console.log(`⏰ Auto-expired ${result.affectedRows} orders`);
+    }
+  } catch (err) {
+    console.error("Auto-expire error:", err);
+  }
+});
 
 // Middleware
 app.use(express.json());

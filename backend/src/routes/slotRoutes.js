@@ -14,6 +14,6 @@ router.get("/", adminAuth, getAllSlots);
 router.get("/:id", adminAuth, getSlotById);
 router.post("/", adminAuth, addSlot);
 router.put("/:id", adminAuth, updateSlot);
-router.delete("/:id", adminAuth, deleteSlot); // Hard delete now
+router.delete("/:id", adminAuth, deleteSlot);
 
 export default router;
