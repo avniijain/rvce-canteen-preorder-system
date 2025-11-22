@@ -1,14 +1,23 @@
 import axios from "axios";
 
-const API = axios.create({
+const api = axios.create({
+  // change this to your backend URL
   baseURL: "http://localhost:5000/api",
 });
 
-// Attach admin token automatically
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("adminToken");
-  if (token) req.headers.Authorization = `Bearer ${token}`;
-  return req;
+// attach token automatically
+api.interceptors.request.use((config) => {
+  const path = window.location.pathname;
+
+  if (path.startsWith("/admin")) {
+    const token = localStorage.getItem("adminToken");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    const token = localStorage.getItem("userToken");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
 });
 
-export default API;
+export default api;
