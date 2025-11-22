@@ -9,11 +9,17 @@ import dashboardRoutes from "./src/routes/dashboardRoutes.js";
 import cron from "node-cron";
 import userAuthRoutes from "./src/routes/userAuthRoutes.js";
 import userOrderRoutes from "./src/routes/userOrderRoutes.js";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 // Run every minute
 cron.schedule("* * * * *", async () => {
