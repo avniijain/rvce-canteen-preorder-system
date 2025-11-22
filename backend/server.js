@@ -8,6 +8,11 @@ import orderRoutes from "./src/routes/orderRoutes.js";
 import dashboardRoutes from "./src/routes/dashboardRoutes.js";
 
 
+import userAuthRoutes from "./src/routes/userAuthRoutes.js";
+import userOrderRoutes from "./src/routes/userOrderRoutes.js";
+
+
+
 dotenv.config();
 
 const app = express();
@@ -20,6 +25,9 @@ app.use('/api/admin/menu', menuRoutes);
 app.use("/api/admin/slots", slotRoutes);
 app.use("/api/admin/orders", orderRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+
+app.use("/api/user/auth", userAuthRoutes);
+app.use("/api/user/orders", userOrderRoutes);
 
 
 // Test route
