@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import AuthSystem from "./pages/authSystem";
 import Dashboard from "./pages/admin/AdminDashboard";
 import UserMenu from "./pages/user/UserMenu";
+import Cart from "./pages/user/Cart"; // ADD THIS IMPORT
 import AdminMenu from "./pages/admin/AdminMenu";
 import SlotManagement from "./pages/admin/SlotManagment";
 import OrderManagement from "./pages/admin/OrderManagement";
@@ -23,14 +24,15 @@ export default function AppRouter() {
       <Route path="/" element={
         <PublicLayout>
           <Home />
-        </PublicLayout>} />
+        </PublicLayout>
+      } />
 
       {/* Login / Signup */}
       <Route
         path="/login"
         element={
           <GuestOnlyRoute>
-              <AuthSystem />
+            <AuthSystem />
           </GuestOnlyRoute>
         }
       />
@@ -39,7 +41,7 @@ export default function AppRouter() {
         path="/auth"
         element={
           <GuestOnlyRoute>
-              <AuthSystem />
+            <AuthSystem />
           </GuestOnlyRoute>
         }
       />
@@ -89,13 +91,25 @@ export default function AppRouter() {
         }
       />
 
-      {/* User Protected */}
+      {/* User Protected Routes */}
       <Route
         path="/user/menu"
         element={
           <ProtectedUserRoute>
             <UserLayout>
               <UserMenu />
+            </UserLayout>
+          </ProtectedUserRoute>
+        }
+      />
+
+      {/* ADD THIS CART ROUTE */}
+      <Route
+        path="/user/cart"
+        element={
+          <ProtectedUserRoute>
+            <UserLayout>
+              <Cart />
             </UserLayout>
           </ProtectedUserRoute>
         }

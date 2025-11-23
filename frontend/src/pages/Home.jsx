@@ -10,7 +10,6 @@ export default function Home() {
   const handleGetStarted = () => {
     if (isAdmin) return navigate('/admin/dashboard');
     if (isUser) return navigate('/user/menu');
-    return navigate('/auth'); // login page
   };
 
   const handleViewMenu = () => {
@@ -76,11 +75,7 @@ export default function Home() {
             overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }}>
-            <img 
-              src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=1200&h=600&fit=crop" 
-              alt="RVCE Canteen" 
-              style={{ width: '100%', height: '400px', objectFit: 'cover' }}
-            />
+            
           </div>
         </div>
       </div>
