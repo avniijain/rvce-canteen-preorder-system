@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import AuthSystem from "./pages/authSystem";
 import Dashboard from "./pages/admin/AdminDashboard";
 import UserMenu from "./pages/user/UserMenu";
+import AdminMenu from "./pages/admin/AdminMenu";
 
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/ProtectedUserRoute";
@@ -48,6 +49,17 @@ export default function AppRouter() {
           <ProtectedAdminRoute>
             <AdminLayout>
               <Dashboard />
+            </AdminLayout>
+          </ProtectedAdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/menu"
+        element={
+          <ProtectedAdminRoute>
+            <AdminLayout>
+              <AdminMenu />
             </AdminLayout>
           </ProtectedAdminRoute>
         }
