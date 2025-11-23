@@ -10,6 +10,7 @@ export default function Home() {
   const handleGetStarted = () => {
     if (isAdmin) return navigate('/admin/dashboard');
     if (isUser) return navigate('/user/menu');
+    return navigate('/auth');
   };
 
   const handleViewMenu = () => {
