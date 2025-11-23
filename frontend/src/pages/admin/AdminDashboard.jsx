@@ -64,8 +64,7 @@ const CanteenDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold" style={{ color: '#2c3e50' }}>RVCE Canteen Preorder System</h1>
-              <p className="text-sm mt-1" style={{ color: '#6c757d' }}>Admin Dashboard</p>
+              <h1 className="text-2xl font-bold" style={{ color: '#2c3e50' }}>Dashboard</h1>
             </div>
           </div>
         </div>

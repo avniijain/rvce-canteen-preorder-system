@@ -1,23 +1,22 @@
-import { Outlet } from "react-router-dom";
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
 import AdminSidebar from "../components/admin/adminSidebar";
-import AdminNavbar from "../components/admin/AdminNavbar";
 
-const AdminLayout = () => {
+const AdminLayout = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <div className="hidden md:block w-64">
-        <AdminSidebar />
-      </div>
+    <>
+      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        <AdminNavbar />
-        <main className="flex-1 p-4 md:p-6">
-          <Outlet />
-        </main>
-      </div>
-    </div>
+      <AdminSidebar sidebarOpen={sidebarOpen} />
+
+      <main className={`pt-20 transition-all duration-300 ${
+        sidebarOpen ? "pl-[260px]" : "pl-0"
+      } p-6`}>
+        {children}
+      </main>
+    </>
   );
 };
 

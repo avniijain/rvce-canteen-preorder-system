@@ -1,25 +1,69 @@
 import { Routes, Route } from "react-router-dom";
-import CanteenAuthSystem from "./pages/authSystem";
+
+import Home from "./pages/Home";
+import AuthSystem from "./pages/authSystem";
 import Dashboard from "./pages/admin/AdminDashboard";
 import UserMenu from "./pages/user/UserMenu";
-import Home from "./pages/Home";
+
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import ProtectedUserRoute from "./components/ProtectedUserRoute";
+import GuestOnlyRoute from "./components/GuestOnlyRoute";
+
+import PublicLayout from "./layouts/PublicLayout";
+import UserLayout from "./layouts/userLayout";
+import AdminLayout from "./layouts/adminLayout";
 
 export default function AppRouter() {
   return (
     <Routes>
-      {/* Homepage as default route */}
-      <Route path="/" element={<Home />} />
-      
-      {/* Auth/Login page */}
-      <Route path="/authSystem" element={<CanteenAuthSystem />} />
-      <Route path="/login" element={<CanteenAuthSystem />} />
-      <Route path="/auth" element={<CanteenAuthSystem />} />
+      {/* Public Routes */}
+      <Route path="/" element={
+        <PublicLayout>
+          <Home />
+        </PublicLayout>} />
 
-      {/* Admin Panel */}
-      <Route path="/admin/dashboard" element={<Dashboard />} />
+      {/* Login / Signup */}
+      <Route
+        path="/login"
+        element={
+          <GuestOnlyRoute>
+              <AuthSystem />
+          </GuestOnlyRoute>
+        }
+      />
 
-      {/* User Panel */}
-      <Route path="/user/menu" element={<UserMenu />} />
+      <Route
+        path="/auth"
+        element={
+          <GuestOnlyRoute>
+              <AuthSystem />
+          </GuestOnlyRoute>
+        }
+      />
+
+      {/* Admin Protected */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedAdminRoute>
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          </ProtectedAdminRoute>
+        }
+      />
+
+      {/* User Protected */}
+      <Route
+        path="/user/menu"
+        element={
+          <ProtectedUserRoute>
+            <UserLayout>
+              <UserMenu />
+            </UserLayout>
+          </ProtectedUserRoute>
+        }
+      />
     </Routes>
   );
 }

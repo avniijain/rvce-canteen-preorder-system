@@ -31,7 +31,25 @@ export const registerUser = async (req, res) => {
       [user_name, email, phone, password_hash, user_type || "student"]
     );
 
-    res.json({ message: "User registered successfully." });
+    const newUserId = result.insertId;
+    const token = jwt.sign(
+      { user_id: newUserId, email, user_type },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+
+    res.json({
+      message: "User registered successfully.",
+      token,
+      user: {
+        user_id: newUserId,
+        user_name,
+        email,
+        phone,
+        user_type
+      }
+    });
   } catch (err) {
     console.error("Signup error:", err);
     res.status(500).json({ message: "Server error during signup" });
@@ -80,7 +98,7 @@ export const loginUser = async (req, res) => {
         user_name: user.user_name,
         email: user.email,
         phone: user.phone,
-        role:"user",
+        role: "user",
         user_type: user.user_type
       }
     });

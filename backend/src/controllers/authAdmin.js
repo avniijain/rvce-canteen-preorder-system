@@ -22,7 +22,7 @@ export const adminSignup = async (req, res) => {
 
     // Hash password
     const password_hash = await bcrypt.hash(password, 10);
-    
+
 
     // Insert admin
     await db.query(
@@ -31,7 +31,24 @@ export const adminSignup = async (req, res) => {
       [username, password_hash, email, staff_role]
     );
 
-    return res.status(201).json({ message: "Admin account created successfully." });
+    const newAdminId = insertRes.insertId;
+    const token = jwt.sign(
+      { admin_id: newAdminId, role: staff_role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+
+    return res.status(201).json({
+      message: "Admin created successfully.",
+      token,
+      admin: {
+        admin_id: newAdminId,
+        username,
+        email,
+        staff_role
+      }
+    });
   } catch (err) {
     console.error("Signup error:", err);
     return res.status(500).json({ message: "Server error during signup" });

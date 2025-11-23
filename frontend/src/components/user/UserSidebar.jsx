@@ -1,12 +1,11 @@
 import React from "react";
-import { Utensils, BarChart3, Clock, FileText } from "lucide-react";
+import { Utensils, ShoppingCart, Package } from "lucide-react";
 
-const AdminSidebar = ({ active, setActive }) => {
+const UserSidebar = ({ active, setActive }) => {
   const menu = [
-    { id: "dashboard", label: "Dashboard", icon: BarChart3, emoji: "📊" },
-    { id: "menu", label: "Menu Management", icon: Utensils, emoji: "🍽" },
-    { id: "slots", label: "Time Slots", icon: Clock, emoji: "⏱" },
-    { id: "orders", label: "Orders", icon: FileText, emoji: "🧾" },
+    { id: "menu", label: "Menu", icon: Utensils, emoji: "🍽" },
+    { id: "cart", label: "Cart", icon: ShoppingCart, emoji: "🛒" },
+    { id: "orders", label: "My Orders", icon: Package, emoji: "📦" },
   ];
 
   return (
@@ -16,13 +15,12 @@ const AdminSidebar = ({ active, setActive }) => {
     >
       <div className="p-4 space-y-2">
         {menu.map((item) => {
-          const Icon = item.icon;
           const activeState = active === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActive(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
                 activeState ? "text-white" : "text-[#2c3e50]"
               }`}
               style={{
@@ -39,4 +37,4 @@ const AdminSidebar = ({ active, setActive }) => {
   );
 };
 
-export default AdminSidebar;
+export default UserSidebar;

@@ -5,7 +5,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/authSystem');
+    navigate('/auth');
   };
 
   const handleViewMenu = () => {
@@ -42,21 +42,6 @@ export default function Home() {
               }}
             >
               Get Started →
-            </button>
-            <button 
-              onClick={handleGetStarted}
-              style={{
-                backgroundColor: 'white',
-                color: '#3F7D58',
-                fontWeight: 'bold',
-                padding: '1rem 2rem',
-                borderRadius: '8px',
-                fontSize: '1.125rem',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              Login
             </button>
             <button 
               onClick={handleViewMenu}
