@@ -4,12 +4,19 @@ import { useNavigate } from 'react-router-dom';
 export default function Home() {
   const navigate = useNavigate();
 
+  const isUser = localStorage.getItem("userToken");
+  const isAdmin = localStorage.getItem("adminToken");
+
   const handleGetStarted = () => {
-    navigate('/auth');
+    if (isAdmin) return navigate('/admin/dashboard');
+    if (isUser) return navigate('/user/menu');
+    return navigate('/auth'); // login page
   };
 
   const handleViewMenu = () => {
-    navigate('/user/menu');
+    if (isAdmin) return navigate('/admin/menu');
+    if (isUser) return navigate('/user/menu');
+    return navigate('/auth');
   };
 
   return (

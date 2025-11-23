@@ -5,6 +5,8 @@ import AuthSystem from "./pages/authSystem";
 import Dashboard from "./pages/admin/AdminDashboard";
 import UserMenu from "./pages/user/UserMenu";
 import AdminMenu from "./pages/admin/AdminMenu";
+import SlotManagement from "./pages/admin/SlotManagment";
+import OrderManagement from "./pages/admin/OrderManagement";
 
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/ProtectedUserRoute";
@@ -60,6 +62,28 @@ export default function AppRouter() {
           <ProtectedAdminRoute>
             <AdminLayout>
               <AdminMenu />
+            </AdminLayout>
+          </ProtectedAdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/slots"
+        element={
+          <ProtectedAdminRoute>
+            <AdminLayout>
+              <SlotManagement />
+            </AdminLayout>
+          </ProtectedAdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/orders"
+        element={
+          <ProtectedAdminRoute>
+            <AdminLayout>
+              <OrderManagement />
             </AdminLayout>
           </ProtectedAdminRoute>
         }
