@@ -4,7 +4,10 @@ export const getAllOrders = async (req, res) => {
   try {
     const { status, done_status, slot, date } = req.query;
 
-    let query = `SELECT * FROM orders WHERE 1=1`;
+    let query = `SELECT o.*, u.user_name, u.email, u.phone 
+    FROM orders o
+    JOIN users u ON o.user_id = u.user_id
+    WHERE 1=1`;
     const params = [];
 
     if (status) {
@@ -44,7 +47,7 @@ export const getOrderDetails = async (req, res) => {
 
     // Fetch order
     const [orders] = await db.query(
-      `SELECT o.*, u.user_name, u.email 
+      `SELECT o.*, u.user_name, u.email, u.phone 
        FROM orders o
        JOIN users u ON o.user_id = u.user_id
        WHERE o.order_id = ?`,

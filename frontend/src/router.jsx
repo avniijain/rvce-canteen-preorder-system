@@ -38,7 +38,7 @@ export default function AppRouter() {
       />
 
       <Route
-        path="/auth"
+        path="/signup"
         element={
           <GuestOnlyRoute>
             <AuthSystem />
@@ -91,6 +91,9 @@ export default function AppRouter() {
         }
       />
 
+  {/* Public menu - no authentication required */}
+      <Route path="/menu" element={<UserMenu />} />
+      
       {/* User Protected Routes */}
       <Route
         path="/user/menu"
