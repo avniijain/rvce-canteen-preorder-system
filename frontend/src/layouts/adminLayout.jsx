@@ -8,11 +8,11 @@ const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const getInitialActive = () => {
-  if (location.pathname.includes("/admin/menu")) return "menu";
-  if (location.pathname.includes("/admin/slots")) return "slots";
-  if (location.pathname.includes("/admin/orders")) return "orders";
-  return "dashboard"; // default
-};
+    if (location.pathname.includes("/admin/menu")) return "menu";
+    if (location.pathname.includes("/admin/slots")) return "slots";
+    if (location.pathname.includes("/admin/orders")) return "orders";
+    return "dashboard";
+  };
 
   const [active, setActive] = useState(getInitialActive());
 
@@ -23,19 +23,16 @@ const AdminLayout = ({ children }) => {
     else setActive("dashboard");
   }, [location.pathname]);
 
-
   return (
     <>
       <Navbar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
-        role="admin"               // REQUIRED for navbar login/logout UI
-        name="Admin"               // will later use stored admin name
       />
 
       <AdminSidebar
-        active={active}            // REQUIRED
-        setActive={setActive}      // REQUIRED
+        active={active}
+        setActive={setActive}
       />
 
       <main

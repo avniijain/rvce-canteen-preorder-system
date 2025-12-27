@@ -10,48 +10,35 @@ export default function Cart() {
     navigate('/user/checkout');
   };
 
+  // If cart empty
   if (cart.length === 0) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF' }}>
-        <header style={{ 
-          backgroundColor: '#3F7D58', 
-          color: 'white', 
-          padding: '1rem 2rem',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Your Cart</h1>
-          </div>
-        </header>
-        
-        <div style={{ 
-          maxWidth: '800px', 
-          margin: '4rem auto', 
+      <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF', paddingTop: '2rem' }}>
+        <div style={{
+          maxWidth: '800px',
+          margin: '4rem auto',
           padding: '3rem 2rem',
           backgroundColor: 'white',
           borderRadius: '12px',
-          textAlign: 'center'
+          textAlign: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🛒</div>
-          <h2 style={{ fontSize: '1.5rem', color: '#333', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#333' }}>
             Your cart is empty
           </h2>
-          <p style={{ color: '#666', marginBottom: '2rem' }}>
-            Add some delicious items from our menu!
-          </p>
-          <button 
-            onClick={() => navigate('/menu')}
+          <button
+            onClick={() => navigate('/user/menu')}
             style={{
               backgroundColor: '#EF9651',
               color: 'white',
-              border: 'none',
               padding: '0.75rem 2rem',
               borderRadius: '8px',
               cursor: 'pointer',
+              border: 'none',
               fontWeight: 'bold',
               fontSize: '1rem'
-            }}
-          >
+            }}>
             Browse Menu
           </button>
         </div>
@@ -60,41 +47,37 @@ export default function Cart() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF' }}>
-      <header style={{ 
-        backgroundColor: '#3F7D58', 
-        color: 'white', 
-        padding: '1rem 2rem',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-      }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF', paddingTop: '1rem' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 1rem' }}>
+        
+        {/* Header */}
         <div style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '2rem'
         }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Your Cart</h1>
-          <button 
-            onClick={() => navigate('/menu')}
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#3F7D58' }}>
+            Your Cart
+          </h1>
+          <button
+            onClick={() => navigate('/user/menu')}
             style={{
-              backgroundColor: 'transparent',
-              color: 'white',
-              border: '2px solid white',
+              backgroundColor: 'white',
+              color: '#3F7D58',
+              border: '2px solid #3F7D58',
               padding: '0.5rem 1rem',
               borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: '600'
-            }}
-          >
+            }}>
             ← Back to Menu
           </button>
         </div>
-      </header>
 
-      <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '0 1rem' }}>
+        {/* Cart Items */}
         {cart.map((item) => (
-          <div 
+          <div
             key={item.id}
             style={{
               backgroundColor: 'white',
@@ -105,59 +88,59 @@ export default function Cart() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              gap: '1rem',
-              flexWrap: 'wrap'
+              flexWrap: 'wrap',
+              gap: '1rem'
             }}
           >
-            <div style={{ flex: '1', minWidth: '200px' }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#333', marginBottom: '0.5rem' }}>
+            <div style={{ flex: 1, minWidth: '200px' }}>
+              <h3 style={{ fontWeight: '600', marginBottom: '0.5rem', fontSize: '1.125rem' }}>
                 {item.name}
               </h3>
-              <p style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#3F7D58' }}>
+
+              <p style={{ fontWeight: 'bold', color: '#3F7D58', fontSize: '1rem' }}>
                 ₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}
               </p>
             </div>
-            
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button 
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <button
+                type="button"
                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
                 style={{
                   backgroundColor: '#EFEFEF',
-                  border: 'none',
+                  borderRadius: '6px',
                   width: '36px',
                   height: '36px',
-                  borderRadius: '6px',
+                  fontSize: '1.25rem',
+                  border: 'none',
                   cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '1.25rem'
-                }}
-              >
+                  fontWeight: 'bold'
+                }}>
                 -
               </button>
-              <span style={{ 
-                minWidth: '40px', 
-                textAlign: 'center', 
-                fontWeight: 'bold',
-                fontSize: '1.125rem'
-              }}>
+
+              <span style={{ fontWeight: 'bold', minWidth: '30px', textAlign: 'center', fontSize: '1.125rem' }}>
                 {item.quantity}
               </span>
-              <button 
+
+              <button
+                type="button"
                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
                 style={{
                   backgroundColor: '#EFEFEF',
-                  border: 'none',
+                  borderRadius: '6px',
                   width: '36px',
                   height: '36px',
-                  borderRadius: '6px',
+                  fontSize: '1.25rem',
+                  border: 'none',
                   cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '1.25rem'
-                }}
-              >
+                  fontWeight: 'bold'
+                }}>
                 +
               </button>
-              <button 
+
+              <button
+                type="button"
                 onClick={() => removeFromCart(item.id)}
                 style={{
                   backgroundColor: '#EC5228',
@@ -168,15 +151,14 @@ export default function Cart() {
                   cursor: 'pointer',
                   fontWeight: '600',
                   marginLeft: '0.5rem'
-                }}
-              >
+                }}>
                 Remove
               </button>
             </div>
           </div>
         ))}
 
-        {/* Total */}
+        {/* Total & Checkout */}
         <div style={{
           backgroundColor: 'white',
           borderRadius: '12px',
@@ -185,45 +167,28 @@ export default function Cart() {
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>Total:</h3>
-            <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3F7D58' }}>
+            <h3 style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>Total:</h3>
+            <p style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#3F7D58' }}>
               ₹{getTotalPrice()}
             </p>
           </div>
-          
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button 
-              onClick={handleCheckout}
-              style={{
-                flex: '1',
-                minWidth: '200px',
-                backgroundColor: '#EF9651',
-                color: 'white',
-                border: 'none',
-                padding: '1rem 2rem',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '1.125rem'
-              }}
-            >
-              Proceed to Checkout
-            </button>
-            <button 
-              onClick={clearCart}
-              style={{
-                backgroundColor: '#EFEFEF',
-                color: '#EC5228',
-                border: 'none',
-                padding: '1rem 2rem',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              Clear Cart
-            </button>
-          </div>
+
+          <button
+            type="button"
+            onClick={handleCheckout}
+            style={{
+              width: '100%',
+              backgroundColor: '#EF9651',
+              padding: '1rem',
+              borderRadius: '8px',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '1.125rem'
+            }}>
+            Proceed to Checkout →
+          </button>
         </div>
       </div>
     </div>

@@ -4,10 +4,12 @@ import Home from "./pages/Home";
 import AuthSystem from "./pages/authSystem";
 import Dashboard from "./pages/admin/AdminDashboard";
 import UserMenu from "./pages/user/UserMenu";
-import Cart from "./pages/user/Cart"; // ADD THIS IMPORT
+import Cart from "./pages/user/Cart"; 
+import UserCheckout from "./pages/user/UserCheckout";
 import AdminMenu from "./pages/admin/AdminMenu";
 import SlotManagement from "./pages/admin/SlotManagment";
 import OrderManagement from "./pages/admin/OrderManagement";
+import UserOrders from "./pages/user/UserOrders";
 
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/ProtectedUserRoute";
@@ -91,22 +93,40 @@ export default function AppRouter() {
         }
       />
 
-  {/* Public menu - no authentication required */}
-      <Route path="/menu" element={<UserMenu />} />
-      
-      {/* User Protected Routes */}
+      <Route
+  path="/user/orders"
+  element={
+    <ProtectedUserRoute>
+      <UserLayout>
+        <UserOrders />
+      </UserLayout>
+    </ProtectedUserRoute>
+  }
+/>
+
       <Route
         path="/user/menu"
         element={
+          <UserLayout>
+            <UserMenu />
+          </UserLayout>
+        }
+      />
+
+      
+      {/* User Protected Routes */}
+
+      <Route
+        path="/user/checkout"
+        element={
           <ProtectedUserRoute>
             <UserLayout>
-              <UserMenu />
+              <UserCheckout />
             </UserLayout>
           </ProtectedUserRoute>
         }
       />
 
-      {/* ADD THIS CART ROUTE */}
       <Route
         path="/user/cart"
         element={
@@ -118,5 +138,7 @@ export default function AppRouter() {
         }
       />
     </Routes>
+
+    
   );
 }

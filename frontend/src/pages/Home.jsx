@@ -7,17 +7,18 @@ export default function Home() {
   const isUser = localStorage.getItem("userToken");
   const isAdmin = localStorage.getItem("adminToken");
 
-  const handleGetStarted = () => {
-    if (isAdmin) return navigate('/admin/dashboard');
-    if (isUser) return navigate('/user/menu');
-    return navigate('/auth');
-  };
+ const handleGetStarted = () => {
+  if (isAdmin) return navigate('/admin/dashboard');
+  if (isUser) return navigate('/user/menu');
+  return navigate('/login');
+};
 
-  const handleViewMenu = () => {
-    if (isAdmin) return navigate('/admin/menu');
-    if (isUser) return navigate('/user/menu');
-    return navigate('/auth');
-  };
+const handleViewMenu = () => {
+  if (isAdmin) return navigate('/admin/menu');
+  return navigate('/user/menu');
+};
+
+  
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF' }}>
