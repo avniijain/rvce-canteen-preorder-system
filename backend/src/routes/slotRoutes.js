@@ -10,7 +10,10 @@ import adminAuth from "../middleware/authAdminMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", adminAuth, getAllSlots);
+// Public GET for all slots (no auth)
+router.get("/", getAllSlots);
+
+// Admin-only routes
 router.get("/:id", adminAuth, getSlotById);
 router.post("/", adminAuth, addSlot);
 router.put("/:id", adminAuth, updateSlot);

@@ -20,51 +20,15 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Invalid time slot selected." });
     }
 
-    // Calculate total
+    // Calculate total amount
     let total_amount = 0;
     items.forEach((item) => {
       total_amount += item.unit_price * item.quantity;
     });
 
-    // Begin Transaction
     await connection.beginTransaction();
 
-    // 1️⃣ **FOR EACH ITEM → VALIDATE STOCK + LOCK ROW**
-    for (const item of items) {
-      const { menu_id, quantity } = item;
-
-      // LOCK THE ROW so no other user touches it
-      const [menuRows] = await connection.query(
-        "SELECT * FROM menu WHERE menu_id = ? FOR UPDATE",
-        [menu_id]
-      );
-
-      if (menuRows.length === 0) {
-          await connection.rollback();
-          return res.status(404).json({ message: "Menu item not found." });
-      }
-
-      const menuItem = menuRows[0];
-
-      // If stock-based, validate
-      if (menuItem.is_stock_based === 1) {
-        if (menuItem.available_qty < quantity) {
-          await connection.rollback();
-          return res.status(400).json({
-            message: `Only ${menuItem.available_qty} left for ${menuItem.item_name}`,
-            menu_id: menu_id,
-          });
-        }
-
-        // Deduct stock
-        await connection.query(
-          "UPDATE menu SET available_qty = available_qty - ? WHERE menu_id = ?",
-          [quantity, menu_id]
-        );
-      }
-    }
-
-    // 2️⃣ INSERT ORDER
+    // Insert into orders (Subtotal removed)
     const [orderRes] = await connection.query(
       `INSERT INTO orders 
        (user_id, order_date, pickup_time, time_slot_id, order_status, done_status, total_amount)
@@ -74,22 +38,33 @@ export const placeOrder = async (req, res) => {
 
     const order_id = orderRes.insertId;
 
-    // 3️⃣ INSERT ORDER ITEMS
+    // Insert order items (DO NOT insert subtotal because it's generated)
     for (const item of items) {
       await connection.query(
         `INSERT INTO order_items (order_id, menu_id, quantity, unit_price)
          VALUES (?, ?, ?, ?)`,
         [order_id, item.menu_id, item.quantity, item.unit_price]
       );
+
+      // Reduce stock only if stock-based
+      if (item.is_stock_based === 1) {
+        await connection.query(
+          `UPDATE menu 
+           SET available_qty = available_qty - ?
+           WHERE menu_id = ?`,
+          [item.quantity, item.menu_id]
+        );
+      }
     }
 
-    // 4️⃣ UPDATE SLOT ORDER COUNT
+    // Update slot order count
     await connection.query(
-      "UPDATE time_slots SET order_count = order_count + 1 WHERE time_slot_id = ?",
+      `UPDATE time_slots 
+       SET order_count = order_count + 1
+       WHERE time_slot_id = ?`,
       [time_slot_id]
     );
 
-    // Commit Everything
     await connection.commit();
 
     res.json({
@@ -104,7 +79,6 @@ export const placeOrder = async (req, res) => {
     connection.release();
   }
 };
-
 
 // ================================
 // Get user order history
