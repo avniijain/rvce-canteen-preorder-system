@@ -38,7 +38,7 @@ export default function UserOrders() {
                 ...order,
                 items: orderDetails.items || [],
                 specialInstructions: order.special_instructions,
-                paymentMethod: order.payment_method || 'cash',
+                paymentMethod: 'UPI',
                 createdAt: order.order_date
               };
             } catch {
@@ -46,7 +46,7 @@ export default function UserOrders() {
                 ...order,
                 items: [],
                 specialInstructions: order.special_instructions,
-                paymentMethod: order.payment_method || 'cash',
+                paymentMethod: 'UPI',
                 createdAt: order.order_date
               };
             }
@@ -62,11 +62,8 @@ export default function UserOrders() {
   };
 
   const getStatusColor = (status) => {
-    switch(status?.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'pending': return '#EF9651';
-      case 'preparing': return '#3F7D58';
-      case 'ready': return '#2d5940';
-      case 'completed': return '#666';
       case 'pickedup': return '#2d5940';
       case 'expired': return '#EC5228';
       case 'cancelled': return '#EC5228';
@@ -75,28 +72,74 @@ export default function UserOrders() {
   };
 
   const getStatusIcon = (status) => {
-    switch(status?.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'pending': return '⏳';
-      case 'preparing': return '👨‍🍳';
-      case 'ready': return '✅';
       case 'pickedup': return '🎉';
-      case 'completed': return '🎉';
       case 'expired': return '❌';
       case 'cancelled': return '❌';
       default: return '📋';
     }
   };
 
-  const filteredOrders = filter === 'all' 
-    ? orders 
+  // Check if order can be cancelled (30 min rule)
+  const canCancelOrder = (pickupTime, orderStatus) => {
+    if (orderStatus !== "pending") return false;
+
+    const now = new Date();
+    const pickup = new Date(pickupTime);
+
+    const diffMinutes = (pickup - now) / (1000 * 60);
+    return diffMinutes >= 30;
+  };
+
+  // Handle cancel order
+  const handleCancelOrder = async (orderId) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmCancel) return;
+
+    try {
+      const token = localStorage.getItem("userToken");
+
+      const res = await fetch(
+        `http://localhost:5000/api/user/orders/${orderId}/cancel`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Cancellation failed");
+        return;
+      }
+
+      alert("Order cancelled successfully");
+
+      // Refresh orders list
+      fetchOrders();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to cancel order");
+    }
+  };
+
+
+  const filteredOrders = filter === 'all'
+    ? orders
     : orders.filter(order => order.order_status?.toLowerCase() === filter);
 
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF' }}>
-        <header style={{ 
-          backgroundColor: '#3F7D58', 
-          color: 'white', 
+        <header style={{
+          backgroundColor: '#3F7D58',
+          color: 'white',
           padding: '1rem 2rem',
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
         }}>
@@ -104,11 +147,11 @@ export default function UserOrders() {
             <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>My Orders</h1>
           </div>
         </header>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '50vh' 
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '50vh'
         }}>
           <p style={{ fontSize: '1.25rem', color: '#666' }}>Loading orders...</p>
         </div>
@@ -118,14 +161,14 @@ export default function UserOrders() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#EFEFEF' }}>
-      <header style={{ 
-        backgroundColor: '#3F7D58', 
-        color: 'white', 
+      <header style={{
+        backgroundColor: '#3F7D58',
+        color: 'white',
         padding: '1rem 2rem',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
       }}>
-        <div style={{ 
-          maxWidth: '1200px', 
+        <div style={{
+          maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           justifyContent: 'space-between',
@@ -134,7 +177,7 @@ export default function UserOrders() {
           gap: '1rem'
         }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>My Orders</h1>
-          <button 
+          <button
             onClick={() => navigate('/user/menu')}
             style={{
               backgroundColor: '#EF9651',
@@ -153,13 +196,13 @@ export default function UserOrders() {
 
       <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
         {/* Filter Tabs */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '1rem', 
+        <div style={{
+          display: 'flex',
+          gap: '1rem',
           marginBottom: '2rem',
           flexWrap: 'wrap'
         }}>
-          {['all', 'pending', 'preparing', 'pickedup', 'expired'].map(status => (
+          {['all', 'pending', 'pickedup', 'expired', 'cancelled'].map(status => (
             <button
               key={status}
               onClick={() => setFilter(status)}
@@ -194,11 +237,11 @@ export default function UserOrders() {
               No orders found
             </h2>
             <p style={{ color: '#666', marginBottom: '2rem' }}>
-              {filter === 'all' 
-                ? "You haven't placed any orders yet." 
+              {filter === 'all'
+                ? "You haven't placed any orders yet."
                 : `No ${filter} orders at the moment.`}
             </p>
-            <button 
+            <button
               onClick={() => navigate('/menu')}
               style={{
                 backgroundColor: '#EF9651',
@@ -216,7 +259,7 @@ export default function UserOrders() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {filteredOrders.map((order) => (
-              <div 
+              <div
                 key={order.order_id}
                 style={{
                   backgroundColor: 'white',
@@ -226,9 +269,9 @@ export default function UserOrders() {
                 }}
               >
                 {/* Order Header */}
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
                   marginBottom: '1.5rem',
                   paddingBottom: '1rem',
@@ -249,8 +292,8 @@ export default function UserOrders() {
                       }) : 'Not specified'}
                     </p>
                   </div>
-                  <div style={{ 
-                    display: 'flex', 
+                  <div style={{
+                    display: 'flex',
                     alignItems: 'center',
                     backgroundColor: getStatusColor(order.order_status),
                     color: 'white',
@@ -271,10 +314,10 @@ export default function UserOrders() {
                     Items
                   </h3>
                   {order.items?.map((item, index) => (
-                    <div 
+                    <div
                       key={index}
-                      style={{ 
-                        display: 'flex', 
+                      style={{
+                        display: 'flex',
                         justifyContent: 'space-between',
                         marginBottom: '0.75rem',
                         padding: '0.5rem',
@@ -296,9 +339,9 @@ export default function UserOrders() {
                 </div>
 
                 {/* Order Footer */}
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
                   paddingTop: '1rem',
                   borderTop: '2px solid #EFEFEF',
@@ -307,7 +350,7 @@ export default function UserOrders() {
                 }}>
                   <div>
                     <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '0.25rem' }}>
-                      Payment: 💵 Cash
+                      Payment: UPI
                     </p>
                     <p style={{ fontSize: '0.875rem', color: '#666' }}>
                       {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', {
@@ -326,7 +369,27 @@ export default function UserOrders() {
                     <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3F7D58' }}>
                       ₹{order.total_amount}
                     </p>
+
+                    {/* Cancel Order Button */}
+                    {canCancelOrder(order.pickup_time, order.order_status) && (
+                      <button
+                        onClick={() => handleCancelOrder(order.order_id)}
+                        style={{
+                          marginTop: '0.75rem',
+                          backgroundColor: '#EC5228',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontWeight: '600'
+                        }}
+                      >
+                        Cancel Order
+                      </button>
+                    )}
                   </div>
+
                 </div>
               </div>
             ))}

@@ -9,10 +9,7 @@ export default function UserCheckout() {
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   
-  const [orderDetails, setOrderDetails] = useState({
-    timeSlotId: '',
-    pickupTime: ''
-  });
+  const [timeSlotId, setTimeSlotId] = useState('');
   
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -56,27 +53,15 @@ export default function UserCheckout() {
     const selectedSlot = slots.find(s => s.time_slot_id === parseInt(slotId));
     
     if (selectedSlot) {
-      // Create pickup_time in correct format: YYYY-MM-DD HH:MM:SS
-      const today = new Date();
-      const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
-      const pickupTime = `${dateStr} ${selectedSlot.start_time}`;
-      
-      setOrderDetails(prev => ({
-        ...prev,
-        timeSlotId: slotId,
-        pickupTime: pickupTime
-      }));
+      setTimeSlotId(slotId);
     }
   };
 
   const handlePlaceOrder = async () => {
-    if (!orderDetails.timeSlotId) {
+    if (!timeSlotId) {
       alert('Please select a pickup time slot');
       return;
     }
-
-    // ✅ Show payment coming soon message
-    alert('💳 Online payment integration (Razorpay) coming soon!\n\nFor now, your order will be placed and you can pay at pickup.');
 
     setIsProcessing(true);
 
@@ -97,12 +82,9 @@ export default function UserCheckout() {
       }));
 
       const orderData = {
-        pickup_time: orderDetails.pickupTime,
-        time_slot_id: parseInt(orderDetails.timeSlotId),
+        time_slot_id: parseInt(timeSlotId),
         items: orderItems
       };
-
-      console.log('Placing order:', orderData);
 
       const response = await fetch('http://localhost:5000/api/user/orders/place', {
         method: 'POST',
@@ -116,9 +98,22 @@ export default function UserCheckout() {
       const data = await response.json();
 
       if (response.ok) {
-        clearCart();
-        alert('✅ Order placed successfully!\n\nOrder ID: ' + data.orderId + '\nPickup Time: ' + orderDetails.pickupTime + '\n\nPay at the counter during pickup.');
-        navigate('/user/orders');
+        localStorage.setItem(
+          "paymentSession",
+          JSON.stringify({
+            orderId: data.order_id,
+            amount: getTotalPrice(),
+            pickupTime: data.pickup_time
+          })
+        );
+        console.log("Order response from backend:", data);
+        navigate('/user/payment', {
+      state: {
+        orderId: data.order_id,
+        pickupTime: data.pickup_time,
+        amount: getTotalPrice()
+      }
+    });
       } else {
         alert('❌ ' + (data.message || 'Failed to place order'));
       }
@@ -229,7 +224,7 @@ export default function UserCheckout() {
                 </div>
               ) : (
                 <select
-                  value={orderDetails.timeSlotId}
+                  value={timeSlotId}
                   onChange={handleSlotChange}
                   style={{
                     width: '100%',
@@ -248,30 +243,6 @@ export default function UserCheckout() {
                   ))}
                 </select>
               )}
-            </div>
-
-            {/* Payment Method Info */}
-            <div style={{ 
-              marginBottom: '1.5rem',
-              padding: '1.5rem',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '8px',
-              border: '2px solid #3F7D58'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                <div style={{ fontSize: '2rem' }}>💳</div>
-                <div>
-                  <h3 style={{ fontWeight: '600', color: '#333', marginBottom: '0.5rem', fontSize: '1.125rem' }}>
-                    Payment Method
-                  </h3>
-                  <p style={{ fontSize: '0.9rem', color: '#666', lineHeight: '1.5', marginBottom: '0.5rem' }}>
-                    Online payment via Razorpay (UPI, Cards, Wallets) will be available soon.
-                  </p>
-                  <p style={{ fontSize: '0.9rem', color: '#3F7D58', fontWeight: '600' }}>
-                    For now: Pay at the counter during pickup
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Important Note */}
@@ -336,15 +307,15 @@ export default function UserCheckout() {
               <button 
                 type="button"
                 onClick={handlePlaceOrder}
-                disabled={isProcessing || !orderDetails.timeSlotId || slots.length === 0}
+                disabled={isProcessing || !timeSlotId || slots.length === 0}
                 style={{
                   width: '100%',
-                  backgroundColor: (isProcessing || !orderDetails.timeSlotId || slots.length === 0) ? '#ccc' : '#EF9651',
+                  backgroundColor: (isProcessing || !timeSlotId || slots.length === 0) ? '#ccc' : '#EF9651',
                   color: 'white',
                   border: 'none',
                   padding: '1rem',
                   borderRadius: '8px',
-                  cursor: (isProcessing || !orderDetails.timeSlotId || slots.length === 0) ? 'not-allowed' : 'pointer',
+                  cursor: (isProcessing || !timeSlotId || slots.length === 0) ? 'not-allowed' : 'pointer',
                   fontWeight: 'bold',
                   fontSize: '1.125rem',
                   transition: 'opacity 0.2s'
@@ -353,7 +324,7 @@ export default function UserCheckout() {
                 {isProcessing ? '⏳ Processing...' : '🛒 Place Order'}
               </button>
 
-              {!orderDetails.timeSlotId && (
+              {!timeSlotId && (
                 <p style={{ 
                   fontSize: '0.875rem', 
                   color: '#dc3545', 

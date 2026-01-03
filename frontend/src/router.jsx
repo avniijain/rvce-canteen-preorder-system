@@ -10,6 +10,7 @@ import AdminMenu from "./pages/admin/AdminMenu";
 import SlotManagement from "./pages/admin/SlotManagment";
 import OrderManagement from "./pages/admin/OrderManagement";
 import UserOrders from "./pages/user/UserOrders";
+import Payment from "./pages/user/Payment";
 
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/ProtectedUserRoute";
@@ -137,8 +138,19 @@ export default function AppRouter() {
           </ProtectedUserRoute>
         }
       />
+      <Route
+        path="/user/payment"
+        element={
+          <ProtectedUserRoute>
+            <UserLayout>
+              <Payment />
+            </UserLayout>
+          </ProtectedUserRoute>
+        }
+      />
     </Routes>
 
+        
     
   );
 }

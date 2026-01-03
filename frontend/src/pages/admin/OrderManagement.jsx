@@ -133,13 +133,13 @@ const OrderManagement = () => {
       const token = localStorage.getItem("adminToken");
       await api.patch(
         `/admin/orders/${orderId}/preparation`,
-        { done_status: newStatus },
+        { food_status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setOrders((prev) =>
         prev.map((o) =>
-          o.order_id === orderId ? { ...o, done_status: newStatus } : o
+          o.order_id === orderId ? { ...o, food_status: newStatus } : o
         )
       );
     } catch (err) {
@@ -167,7 +167,7 @@ const OrderManagement = () => {
           orderDateISO === filters.customDate)) &&
       (filters.status === "all" || filters.status === order.order_status) &&
       (filters.doneStatus === "all" ||
-        filters.doneStatus === order.done_status) &&
+        filters.doneStatus === order.food_status) &&
       (filters.slot === "all" ||
         Number(filters.slot) === Number(order.time_slot_id))
     );
@@ -183,7 +183,7 @@ const OrderManagement = () => {
         todayISO
     ).length,
     prepared: orders.filter(
-      (o) => o.done_status === "prepared" && o.order_status === "pending"
+      (o) => o.food_status === "prepared" && o.order_status === "pending"
     ).length,
   };
 
@@ -376,7 +376,7 @@ const OrderManagement = () => {
                   <td className="px-6 py-4">
                     <select
                       className="border px-2 py-1 rounded"
-                      value={order.done_status}
+                      value={order.food_status}
                       onChange={(e) =>
                         updateDoneStatus(order.order_id, e.target.value)
                       }

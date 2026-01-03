@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 export const getAllOrders = async (req, res) => {
   try {
-    const { status, done_status, slot, date } = req.query;
+    const { status, food_status, slot, date } = req.query;
 
     let query = `SELECT o.*, u.user_name, u.email, u.phone 
     FROM orders o
@@ -15,9 +15,9 @@ export const getAllOrders = async (req, res) => {
       params.push(status);
     }
 
-    if (done_status) {
-      query += ` AND done_status = ?`;
-      params.push(done_status);
+    if (food_status) {
+      query += ` AND food_status = ?`;
+      params.push(food_status);
     }
 
     if (slot) {
@@ -101,11 +101,11 @@ export const updateOrderStatus = async (req, res) => {
 export const updatePreparationStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { done_status } = req.body;
+    const { food_status } = req.body;
 
     const [result] = await db.query(
-      `UPDATE orders SET done_status = ? WHERE order_id = ?`,
-      [done_status, id]
+      `UPDATE orders SET food_status = ? WHERE order_id = ?`,
+      [food_status, id]
     );
 
     if (result.affectedRows === 0)

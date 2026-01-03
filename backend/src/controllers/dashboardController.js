@@ -18,7 +18,7 @@ export const getDashboardSummary = async (req, res) => {
 
     const [[prepared]] = await db.query(
       `SELECT COUNT(*) AS prepared_orders 
-       FROM orders WHERE done_status = 'prepared'`
+       FROM orders WHERE food_status = 'prepared'`
     );
 
     const [[totalUsers]] = await db.query(

@@ -12,6 +12,7 @@ import cron from "node-cron";
 
 import userAuthRoutes from "./src/routes/userAuthRoutes.js";
 import userOrderRoutes from "./src/routes/userOrderRoutes.js";
+import paymentRoutes from "./src/routes/paymentRoutes.js";
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use("/api/user/slots", slotRoutes);
 
 app.use("/api/user/auth", userAuthRoutes);
 app.use("/api/user/orders", userOrderRoutes);
+app.use("/api/user/payment", paymentRoutes);
 
 // Test route
 app.get('/', async (req, res) => {
