@@ -271,6 +271,7 @@ const OrderManagement = () => {
                   <option value="pending">Pending</option>
                   <option value="pickedup">Picked Up</option>
                   <option value="expired">Expired</option>
+                  <option value="cancelled">Cancelled</option>
                 </select>
               </div>
 
@@ -354,9 +355,9 @@ const OrderManagement = () => {
 
                   {/* Status */}
                   <td className="px-6 py-4">
-                    {order.order_status === "expired" ? (
+                    {order.order_status === "expired" || order.order_status === "cancelled" || order.order_status === "pickeup" ? (
                       <span className="px-3 py-1 bg-gray-200 text-gray-500 rounded-full text-xs">
-                        Expired
+                        {order.order_status.charAt(0).toUpperCase() + order.order_status.slice(1)}
                       </span>
                     ) : (
                       <select
@@ -372,19 +373,27 @@ const OrderManagement = () => {
                     )}
                   </td>
 
+
                   {/* Preparation */}
                   <td className="px-6 py-4">
-                    <select
-                      className="border px-2 py-1 rounded"
-                      value={order.food_status}
-                      onChange={(e) =>
-                        updateDoneStatus(order.order_id, e.target.value)
-                      }
-                    >
-                      <option value="prepared">Prepared</option>
-                      <option value="not-prepared">Not Prepared</option>
-                    </select>
+                    {order.order_status === "pending" ? (
+                      <select
+                        className="border px-2 py-1 rounded"
+                        value={order.food_status}
+                        onChange={(e) =>
+                          updateDoneStatus(order.order_id, e.target.value)
+                        }
+                      >
+                        <option value="prepared">Prepared</option>
+                        <option value="not-prepared">Not Prepared</option>
+                      </select>
+                    ) : (
+                      <span className="px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs">
+                        {order.food_status === "prepared" ? "Prepared" : "Not Prepared"}
+                      </span>
+                    )}
                   </td>
+
 
                   {/* View */}
                   <td className="px-6 py-4 text-center">

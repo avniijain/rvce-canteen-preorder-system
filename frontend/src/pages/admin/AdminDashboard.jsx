@@ -26,19 +26,19 @@ const CanteenDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-  
+
       const { data: summaryData } = await api.get("/admin/dashboard/summary");
       setSummary(summaryData);
-  
+
       const { data: slotData } = await api.get("/admin/dashboard/orders-by-slot");
       setOrdersBySlot(slotData);
-  
+
       const { data: revenueData } = await api.get("/admin/dashboard/revenue-daily");
       setRevenueDaily(revenueData);
-  
+
       const { data: topItemsData } = await api.get("/admin/dashboard/top-items");
       setTopItems(topItemsData);
-  
+
       setLoading(false);
     } catch (error) {
       console.error("Failed to load dashboard:", error);
@@ -177,50 +177,24 @@ const CanteenDashboard = () => {
           </div>
         </div>
 
-        {/* Top Selling Items */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6" style={{ border: '1px solid #e9ecef' }}>
-            <h3 className="text-lg font-bold mb-4" style={{ color: '#2c3e50' }}>Top Selling Items</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={topItems}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ item_name, percent }) => `${item_name} (${(percent * 100).toFixed(0)}%)`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="total_sold"
-                  nameKey="item_name"
-                >
-                  {topItems.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6" style={{ border: '1px solid #e9ecef' }}>
-            <h3 className="text-lg font-bold mb-4" style={{ color: '#2c3e50' }}>Top Items List</h3>
-            <div className="space-y-4">
-              {topItems.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: '#f8f9fa' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: COLORS[index % COLORS.length] }}>
-                      {index + 1}
-                    </div>
-                    <div>
-                      <p className="font-semibold" style={{ color: '#2c3e50' }}>{item.item_name}</p>
-                      <p className="text-sm" style={{ color: '#6c757d' }}>Sold: {item.total_sold} units</p>
-                    </div>
+        <div className="bg-white rounded-lg shadow-md p-6" style={{ border: '1px solid #e9ecef' }}>
+          <h3 className="text-lg font-bold mb-4" style={{ color: '#2c3e50' }}>Top Items List</h3>
+          <div className="space-y-4">
+            {topItems.map((item, index) => (
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: '#f8f9fa' }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: COLORS[index % COLORS.length] }}>
+                    {index + 1}
                   </div>
-                  <Package size={20} style={{ color: '#6c757d' }} />
+                  <div>
+                    <p className="font-semibold" style={{ color: '#2c3e50' }}>{item.item_name}</p>
+                    <p className="text-sm" style={{ color: '#6c757d' }}>Sold: {item.total_sold} units</p>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <Package size={20} style={{ color: '#6c757d' }} />
+              </div>
+            ))}
           </div>
         </div>
       </div>

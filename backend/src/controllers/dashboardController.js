@@ -26,8 +26,12 @@ export const getDashboardSummary = async (req, res) => {
     );
 
     const [[totalRevenue]] = await db.query(
-      `SELECT IFNULL(SUM(total_amount),0) AS total_revenue FROM orders`
+      `SELECT IFNULL(SUM(total_amount),0) AS total_revenue
+   FROM orders
+   WHERE payment_status = 'paid'
+     AND order_status IN ('pending','pickedup')`
     );
+
 
     res.json({
       total_orders: totalOrders.total_orders,
@@ -48,10 +52,12 @@ export const getOrdersBySlot = async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT ts.slot_name, COUNT(o.order_id) AS order_count
-       FROM time_slots ts
-       LEFT JOIN orders o ON ts.time_slot_id = o.time_slot_id
-       GROUP BY ts.time_slot_id
-       ORDER BY ts.start_time`
+FROM time_slots ts
+LEFT JOIN orders o
+  ON ts.time_slot_id = o.time_slot_id
+ AND o.order_status IN ('pending','pickedup')
+GROUP BY ts.time_slot_id
+ORDER BY ts.start_time`
     );
 
     res.json(rows);
@@ -65,10 +71,13 @@ export const getRevenueDaily = async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT DATE(order_date) AS date,
-              SUM(total_amount) AS revenue
-       FROM orders
-       GROUP BY DATE(order_date)
-       ORDER BY DATE(order_date)`
+       SUM(total_amount) AS revenue
+FROM orders
+WHERE payment_status = 'paid'
+  AND order_status IN ('pending','pickedup')
+GROUP BY DATE(order_date)
+ORDER BY DATE(order_date);
+`
     );
 
     res.json(rows);
@@ -82,11 +91,14 @@ export const getTopSellingItems = async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT m.item_name, SUM(oi.quantity) AS total_sold
-       FROM order_items oi
-       JOIN menu m ON oi.menu_id = m.menu_id
-       GROUP BY oi.menu_id
-       ORDER BY total_sold DESC
-       LIMIT 5`
+FROM order_items oi
+JOIN orders o ON oi.order_id = o.order_id
+JOIN menu m ON oi.menu_id = m.menu_id
+WHERE o.payment_status = 'paid'
+  AND o.order_status IN ('pending','pickedup')
+GROUP BY oi.menu_id
+ORDER BY total_sold DESC
+LIMIT 5`
     );
 
     res.json(rows);
