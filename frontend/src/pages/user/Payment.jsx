@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle, Copy, AlertCircle } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import qrCode from "../../assets/gpay-qr-code.webp";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function UserPayment() {
   const navigate = useNavigate();
@@ -24,6 +24,7 @@ export default function UserPayment() {
 
   const upiId = 'canteen@upi';
 
+  const upiUrl = `upi://pay?pa=${upiId}&pn=Canteen&am=${amount}&cu=INR`;
   // 🚫 Prevent direct access / refresh issues
   if (!orderId || !amount) {
     return (
@@ -133,16 +134,15 @@ export default function UserPayment() {
           {/* QR Code */}
           <div className="text-center mb-6">
             <div className="inline-block p-4 rounded-lg" style={{ backgroundColor: "#FAFAFA" }}>
-              <img
-                src={qrCode}
-                alt="UPI QR Code"
-                width="200"
-                height="200"
-                className="rounded-lg"
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-3">Scan QR code to pay</p>
-          </div>
+                  <QRCodeCanvas
+                    value={upiUrl}
+                    size={200}
+                    level="H"
+                    includeMargin={true}
+                  />
+                </div>
+                <p className="text-sm text-gray-500 mt-3">Scan QR code to pay</p>
+              </div>
 
           {/* Divider */}
           <div className="relative my-6">

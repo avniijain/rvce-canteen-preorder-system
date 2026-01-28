@@ -33,13 +33,24 @@ export default function UserCheckout() {
       // ✅ Handle both array and object responses
       const slotsArray = Array.isArray(data) ? data : (data.slots || []);
       
-      // Filter only active slots
-      const activeSlots = slotsArray.filter(slot => slot.is_active === 1);
-      setSlots(activeSlots);
-      
-      if (activeSlots.length === 0) {
-        alert('No active time slots available. Please contact admin.');
+      const now = new Date();
+
+      const filteredSlots = slotsArray.filter(slot => {
+        if (slot.is_active !== 1) return false;
+
+        const [endHour, endMinute] = slot.end_time.split(':').map(Number);
+        const slotEnd = new Date();
+        slotEnd.setHours(endHour, endMinute, 0, 0);
+
+        return slotEnd > now; // only future slots
+      });
+
+      setSlots(filteredSlots);
+
+      if (filteredSlots.length === 0) {
+        alert('No upcoming time slots available. Please contact admin.');
       }
+
     } catch (err) {
       console.error('Failed to fetch slots:', err);
       alert('Could not load time slots. Please try again or contact support.');

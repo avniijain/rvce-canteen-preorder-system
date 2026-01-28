@@ -29,7 +29,7 @@ export const getDashboardSummary = async (req, res) => {
       `SELECT IFNULL(SUM(total_amount),0) AS total_revenue
    FROM orders
    WHERE payment_status = 'paid'
-     AND order_status IN ('pending','pickedup')`
+     AND order_status IN ('pending','pickedup','expired')`
     );
 
 
@@ -74,7 +74,7 @@ export const getRevenueDaily = async (req, res) => {
        SUM(total_amount) AS revenue
 FROM orders
 WHERE payment_status = 'paid'
-  AND order_status IN ('pending','pickedup')
+  AND order_status IN ('pending','pickedup','expired')
 GROUP BY DATE(order_date)
 ORDER BY DATE(order_date);
 `
@@ -95,7 +95,7 @@ FROM order_items oi
 JOIN orders o ON oi.order_id = o.order_id
 JOIN menu m ON oi.menu_id = m.menu_id
 WHERE o.payment_status = 'paid'
-  AND o.order_status IN ('pending','pickedup')
+  AND o.order_status IN ('pending','pickedup','expired')
 GROUP BY oi.menu_id
 ORDER BY total_sold DESC
 LIMIT 5`

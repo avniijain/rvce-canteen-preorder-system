@@ -34,7 +34,7 @@ api.interceptors.response.use(
 
       if (isAdminRoute) {
         localStorage.removeItem("adminToken");
-        window.location.href = "/login";
+        window.location.href = "/admin/login";
       } else {
         localStorage.removeItem("userToken");
         window.location.href = "/login";

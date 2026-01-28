@@ -157,8 +157,9 @@ const OrderManagement = () => {
       .reverse()
       .join("-");
 
-    return (
-      (!search ||
+    return (order.payment_status === "paid" &&
+      (
+        !search ||
         order.order_id.toString().includes(search) ||
         order.user_name?.toLowerCase().includes(search)) &&
       (filters.dateFilter === "all" ||
